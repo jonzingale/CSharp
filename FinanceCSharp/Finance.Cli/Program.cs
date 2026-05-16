@@ -78,8 +78,8 @@ var layout = new Layout();
 // layout.SetValue("title", "Takens Clustering");
 layout.SetValue("showlegend", false);
 layout.SetValue("scene", scene);
-layout.SetValue("width", 1400);
-layout.SetValue("height", 950);
+layout.SetValue("width", 1200);
+layout.SetValue("height", 800);
 
 var chart = GenericChart.ofTraceObject(true, trace).WithLayout(layout);
 

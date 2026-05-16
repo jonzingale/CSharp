@@ -92,6 +92,8 @@ var html = File.ReadAllText(outputPath);
 
 var summaryHtml = """
 <main style="max-width: 1400px; margin: 0 auto; padding: 24px;">
+  <h2>Takens-Markowitz Portfolio Analysis</h2>
+
   <p style="max-width: 960px; margin: 0 0 20px 0; font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
     This visualization clusters a basket of equities and ETFs using 3 years of daily price data.
     Each point is built from a Takens-style embedding and exponential-regression features, then grouped

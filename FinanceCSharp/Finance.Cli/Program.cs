@@ -61,25 +61,33 @@ trace.SetValue("marker", new
 });
 
 var xAxis = new LinearAxis();
-xAxis.SetValue("title", new { text = "x = 1 - rho1" });
+xAxis.SetValue("title", new { text = "x = 1 - ρ1" });
 
 var yAxis = new LinearAxis();
-yAxis.SetValue("title", new { text = "y = 1 - rho2" });
+yAxis.SetValue("title", new { text = "y = 1 - ρ2" });
 
 var zAxis = new LinearAxis();
-zAxis.SetValue("title", new { text = "z = 100 * mu1" });
+zAxis.SetValue("title", new { text = "z = 100 * μ1" });
 
 var scene = new Scene();
 scene.SetValue("xaxis", xAxis);
 scene.SetValue("yaxis", yAxis);
 scene.SetValue("zaxis", zAxis);
+scene.SetValue("domain", new { x = new[] { 0.05, 0.95 }, y = new[] { 0.0, 1.0 } });
+
+scene.SetValue("camera", new
+{
+    eye = new { x = 1.75, y = -1.75, z = 1.1 },
+    center = new { x = 0.0, y = 0.0, z = 0.0 },
+    up = new { x = 0.0, y = 0.0, z = 1.0 }
+});
 
 var layout = new Layout();
-// layout.SetValue("title", "Takens Clustering");
 layout.SetValue("showlegend", false);
 layout.SetValue("scene", scene);
 layout.SetValue("width", 1200);
-layout.SetValue("height", 800);
+layout.SetValue("height", 700);
+layout.SetValue("margin", new { l = 0, r = 30, b = 10, t = 0, pad = 0 });
 
 var chart = GenericChart.ofTraceObject(true, trace).WithLayout(layout);
 
@@ -91,15 +99,17 @@ Plotly.NET.CSharp.GenericChartExtensions.SaveHtml(chart, outputPath, OpenInBrows
 var html = File.ReadAllText(outputPath);
 
 var summaryHtml = """
-<main style="max-width: 1400px; margin: 0 auto; padding: 24px;">
-  <h2>Takens-Markowitz Portfolio Analysis</h2>
+<main style="max-width: 980px; margin: 0 auto; padding: 12px 24px 8px 24px;">
+  <h2 style="margin: 0 0 8px 0; font-family: Arial, sans-serif; color: #222;">Takens-Markowitz Portfolio Analysis</h2>
 
-  <p style="max-width: 960px; margin: 0 0 20px 0; font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
+  <p style="max-width: 960px; margin: 0 0 12px 0; font-family: Arial, sans-serif; line-height: 1.45; color: #222;">
     This visualization clusters a basket of equities and ETFs using 3 years of daily price data.
     Each point is built from a Takens-style embedding and exponential-regression features, then grouped
     with a 6-component Gaussian mixture model. In this run, the analysis uses raw prices rather than
     log returns, does not apply PCA, and includes regression strength terms in the clustering features.
   </p>
+
+  <div style="overflow-x: auto; background: white; border-radius: 8px; padding: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
 """;
 
 html = html.Replace(
@@ -108,8 +118,14 @@ html = html.Replace(
 );
 
 html = html.Replace(
+    """var config = {"responsive":true};""",
+    """var config = {"responsive":false};"""
+);
+
+html = html.Replace(
     "</body>",
     """
+  </div>
 </main>
 </body>
 """

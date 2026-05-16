@@ -1,11 +1,13 @@
+## Demo
 
-(https://jonzingale.github.io/markowitz/index.html) [Takens-Markowitz]
+[Takens-Markowitz](https://jonzingale.github.io/markowitz/index.html)
 
-Local build
-```
+## Local build
+
+```bash
 start_postgres
-dotnet build; \
+dotnet build
 dotnet run --project Finance.Cli
 ```
 
-Open `takens-clustering.html` in Opera
+Open `output/takens-clustering.html` in WebGL supported browser.

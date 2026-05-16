@@ -1,0 +1,29 @@
+# .NET build artifacts
+bin/
+obj/
+**/bin/
+**/obj/
+
+# User-specific Visual Studio / Rider files (if you ever open there)
+# .vs/
+# .idea/
+# *.suo
+# *.user
+# *.userosscache
+# *.sln.docstates
+
+# OS cruft (macOS)
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs and temp
+*.log
+*.tmp
+
+# Tooling / editor configs (keep only if you decide not to share them)
+# *.sublime-workspace
+# *.sublime-project
+
+# Idiosyncratic
+output/

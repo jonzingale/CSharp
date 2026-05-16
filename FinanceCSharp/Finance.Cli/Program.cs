@@ -1,21 +1,19 @@
-﻿using Finance.Core.Data;
+using Finance.Core.Data;
 using Finance.Core.TakensClustering;
 using Plotly.NET;
+using Plotly.NET.CSharp;
 using Plotly.NET.LayoutObjects;
-using Plotly.NET.TraceObjects;
 
 var db = new PostgresPriceDataService(new DbOptions());
 var service = new TakensClusteringService(db);
 
 var tickers = new[]
 {
-    "VOO", "VGT", "CDNS", "TSM", "CTAS",
-    "WM", "MA", "APO", "BRK-B", "RACE", "AEE", "RIVN",
-    "DIS", "SE", "PI", "SFM", "AUR", "FRNW", "QQQ", "SNPS",
+    "VOO", "VGT", "CDNS", "TSM", "CTAS", "PGR",
+    "AJG", "WM", "MA", "APO", "BRK-B", "RACE", "AEE",
+    "DIS", "SE", "PI", "SFM", "FRNW", "QQQ",
+    "SNPS",
 };
-
-// sorted tickers
-tickers = tickers.OrderBy(t => t).ToArray();
 
 var result = await service.RunAsync(
     tickers: tickers,
@@ -26,57 +24,48 @@ var result = await service.RunAsync(
     useRsqr: true
 );
 
-var points = result.Coordinates
-    .Select((c, i) => new
-    {
-        Ticker = c.Ticker,
-        X = 1.0 - c.Rho1,
-        Y = 1.0 - c.Rho2,
-        Z = 100.0 * c.Mu1,
-        Cluster = result.Labels[i]
-    })
-    .OrderBy(p => p.Ticker)
-    .ToArray();
+var coords = result.Coordinates;
+
+var x = coords.Select(c => 1.0 - c.Rho1).ToArray();
+var y = coords.Select(c => 1.0 - c.Rho2).ToArray();
+var z = coords.Select(c => 100.0 * c.Mu1).ToArray();
+var labels = coords.Select(c => c.Ticker).ToArray();
+var clusters = result.Labels;
 
 var palette = new[]
 {
-    "#1f77b4", "#d62728", "#2ca02c",
-    "#ff7f0e", "#9467bd", "#8c564b"
+    "#1f77b4", "#d62728", "#2ca02c", "#ff7f0e", "#9467bd", "#8c564b"
 };
 
-var x = points.Select(p => p.X).ToArray();
-var y = points.Select(p => p.Y).ToArray();
-var z = points.Select(p => p.Z).ToArray();
-var labels = points.Select(p => p.Ticker).ToArray();
-var colors = points
-    .Select(p => palette[Math.Abs(p.Cluster) % palette.Length])
+var colorStrings = clusters
+    .Select(label => palette[Math.Abs(label) % palette.Length])
     .ToArray();
 
-var marker = new Marker();
-marker.SetValue("size", 8);
-marker.SetValue("color", colors);
-marker.SetValue("opacity", 0.90);
-
-var trace = new Trace("scatter3d");
+var trace = new Plotly.NET.Trace("scatter3d");
 trace.SetValue("x", x);
 trace.SetValue("y", y);
 trace.SetValue("z", z);
+trace.SetValue("type", "scatter3d");
 trace.SetValue("mode", "markers+text");
 trace.SetValue("text", labels);
 trace.SetValue("textposition", "top center");
 trace.SetValue("hovertext", labels);
 trace.SetValue("hoverinfo", "text");
-trace.SetValue("name", "Takens");
-trace.SetValue("marker", marker);
+trace.SetValue("marker", new
+{
+    size = 6,
+    color = colorStrings,
+    opacity = 0.85
+});
 
 var xAxis = new LinearAxis();
-xAxis.SetValue("title", "x = 1 - rho1");
+xAxis.SetValue("title", new { text = "σ1 = 1 - rho1" });
 
 var yAxis = new LinearAxis();
-yAxis.SetValue("title", "y = 1 - rho2");
+yAxis.SetValue("title", new { text = "σ2 = 1 - rho2" });
 
 var zAxis = new LinearAxis();
-zAxis.SetValue("title", "z = 100 * mu1");
+zAxis.SetValue("title", new { text = "100 * mu1" });
 
 var scene = new Scene();
 scene.SetValue("xaxis", xAxis);
@@ -84,24 +73,17 @@ scene.SetValue("yaxis", yAxis);
 scene.SetValue("zaxis", zAxis);
 
 var layout = new Layout();
-layout.SetValue("title", "Takens Clustering");
+layout.SetValue("title", new { text = "Takens Clustering" });
+layout.SetValue("scene", scene);
 layout.SetValue("width", 1400);
 layout.SetValue("height", 950);
-layout.SetValue("showlegend", false);
-layout.SetValue("scene", scene);
+layout.SetValue("margin", new { l = 0, r = 0, b = 0, t = 40 });
 
-var chart = GenericChart
-    .ofTraceObject(true, trace)
-    .WithLayout(layout);
+var chart = GenericChart.ofTraceObject(true, trace).WithLayout(layout);
 
-var outputPath = Path.Combine(
-    Environment.CurrentDirectory, "Output" ,"takens-clustering.html");
-Plotly.NET.GenericChartExtensions.SaveHtml(chart, outputPath);
+var outputPath = Path.Combine(Environment.CurrentDirectory, "..", "output", "takens-clustering.html");
+Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-Console.WriteLine($"Saved chart to: {outputPath}");
+Plotly.NET.CSharp.GenericChartExtensions.SaveHtml(chart, outputPath, OpenInBrowser: true);
 
-foreach (var p in points)
-{
-    Console.WriteLine(
-        $"{p.Ticker,-6}  x={p.X:F4}  y={p.Y:F4}  z={p.Z:F4}  cluster={p.Cluster}");
-}
+Console.WriteLine($"Saved chart to: {Path.GetFullPath(outputPath)}");

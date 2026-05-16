@@ -11,8 +11,7 @@ var tickers = new[]
 {
     "VOO", "VGT", "CDNS", "TSM", "CTAS",
     "WM", "MA", "APO", "BRK-B", "RACE", "AEE", "RIVN",
-    "DIS", "SE", "PI", "SFM", "AUR", "FRNW", "QQQ",
-    "SEDG", "SNPS",
+    "DIS", "SE", "PI", "SFM", "AUR", "FRNW", "QQQ", "SNPS",
 };
 
 // sorted tickers

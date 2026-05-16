@@ -10,4 +10,4 @@ dotnet build
 dotnet run --project Finance.Cli
 ```
 
-Open `output/takens-clustering.html` in WebGL supported browser.
+Open `output/index.html` in WebGL supported browser.

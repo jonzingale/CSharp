@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Finance.Core.Data;
 using Finance.Core.TakensClustering;
 using Plotly.NET;
@@ -51,21 +52,22 @@ trace.SetValue("text", labels);
 trace.SetValue("textposition", "top center");
 trace.SetValue("hovertext", labels);
 trace.SetValue("hoverinfo", "text");
+trace.SetValue("name", "Takens");
 trace.SetValue("marker", new
 {
-    size = 6,
+    size = 8,
     color = colorStrings,
-    opacity = 0.85
+    opacity = 0.9
 });
 
 var xAxis = new LinearAxis();
-xAxis.SetValue("title", new { text = "σ1 = 1 - rho1" });
+xAxis.SetValue("title", new { text = "x = 1 - rho1" });
 
 var yAxis = new LinearAxis();
-yAxis.SetValue("title", new { text = "σ2 = 1 - rho2" });
+yAxis.SetValue("title", new { text = "y = 1 - rho2" });
 
 var zAxis = new LinearAxis();
-zAxis.SetValue("title", new { text = "100 * mu1" });
+zAxis.SetValue("title", new { text = "z = 100 * mu1" });
 
 var scene = new Scene();
 scene.SetValue("xaxis", xAxis);
@@ -73,17 +75,52 @@ scene.SetValue("yaxis", yAxis);
 scene.SetValue("zaxis", zAxis);
 
 var layout = new Layout();
-layout.SetValue("title", new { text = "Takens Clustering" });
+// layout.SetValue("title", "Takens Clustering");
+layout.SetValue("showlegend", false);
 layout.SetValue("scene", scene);
 layout.SetValue("width", 1400);
 layout.SetValue("height", 950);
-layout.SetValue("margin", new { l = 0, r = 0, b = 0, t = 40 });
 
 var chart = GenericChart.ofTraceObject(true, trace).WithLayout(layout);
 
-var outputPath = Path.Combine(Environment.CurrentDirectory, "..", "output", "takens-clustering.html");
+var outputPath = Path.Combine(Environment.CurrentDirectory, "output", "index.html");
 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
 
-Plotly.NET.CSharp.GenericChartExtensions.SaveHtml(chart, outputPath, OpenInBrowser: true);
+Plotly.NET.CSharp.GenericChartExtensions.SaveHtml(chart, outputPath, OpenInBrowser: false);
+
+var html = File.ReadAllText(outputPath);
+
+var summaryHtml = """
+<main style="max-width: 1400px; margin: 0 auto; padding: 24px;">
+  <h1 style="font-family: Arial, sans-serif; color: #222; margin: 0 0 12px 0;">
+    Takens Clustering
+  </h1>
+  <p style="max-width: 900px; margin: 0 0 24px 0; font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
+    A C# prototype for clustering financial time series using Takens-style embeddings,
+    regression-derived features, and Gaussian mixture models. The interactive chart
+    shows how assets group together in a reduced risk-return space.
+  </p>
+""";
+
+html = html.Replace(
+    "<body>",
+    """<body style="margin:0; background:#f7f7f7;">""" + summaryHtml
+);
+
+html = html.Replace(
+    "</body>",
+    """
+</main>
+</body>
+"""
+);
+
+File.WriteAllText(outputPath, html);
+
+Process.Start(new ProcessStartInfo
+{
+    FileName = outputPath,
+    UseShellExecute = true
+});
 
 Console.WriteLine($"Saved chart to: {Path.GetFullPath(outputPath)}");

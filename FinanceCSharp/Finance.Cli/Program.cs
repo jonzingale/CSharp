@@ -92,13 +92,11 @@ var html = File.ReadAllText(outputPath);
 
 var summaryHtml = """
 <main style="max-width: 1400px; margin: 0 auto; padding: 24px;">
-  <h1 style="font-family: Arial, sans-serif; color: #222; margin: 0 0 12px 0;">
-    Takens Clustering
-  </h1>
-  <p style="max-width: 900px; margin: 0 0 24px 0; font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
-    A C# prototype for clustering financial time series using Takens-style embeddings,
-    regression-derived features, and Gaussian mixture models. The interactive chart
-    shows how assets group together in a reduced risk-return space.
+  <p style="max-width: 960px; margin: 0 0 20px 0; font-family: Arial, sans-serif; line-height: 1.6; color: #222;">
+    This visualization clusters a basket of equities and ETFs using 3 years of daily price data.
+    Each point is built from a Takens-style embedding and exponential-regression features, then grouped
+    with a 6-component Gaussian mixture model. In this run, the analysis uses raw prices rather than
+    log returns, does not apply PCA, and includes regression strength terms in the clustering features.
   </p>
 """;
 

@@ -1,5 +1,5 @@
 
-[https://jonzingale.github.io/markowitz/index.html](takens-markowitz)
+(https://jonzingale.github.io/markowitz/index.html) [Takens-Markowitz]
 
 Local build
 ```

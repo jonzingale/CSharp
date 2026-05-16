@@ -73,21 +73,20 @@ var scene = new Scene();
 scene.SetValue("xaxis", xAxis);
 scene.SetValue("yaxis", yAxis);
 scene.SetValue("zaxis", zAxis);
-scene.SetValue("domain", new { x = new[] { 0.05, 0.95 }, y = new[] { 0.0, 1.0 } });
-
+scene.SetValue("domain", new { x = new[] { 0.00, 0.68 }, y = new[] { 0.2, 1.0 } });
 scene.SetValue("camera", new
 {
-    eye = new { x = 1.75, y = -1.75, z = 1.1 },
-    center = new { x = 0.0, y = 0.0, z = 0.0 },
+    eye = new { x = 1.55, y = -1.55, z = 1.05 },
+    center = new { x = -0.08, y = 0.04, z = 0.04 },
     up = new { x = 0.0, y = 0.0, z = 1.0 }
 });
 
 var layout = new Layout();
 layout.SetValue("showlegend", false);
 layout.SetValue("scene", scene);
-layout.SetValue("width", 1200);
-layout.SetValue("height", 700);
-layout.SetValue("margin", new { l = 0, r = 30, b = 10, t = 0, pad = 0 });
+layout.SetValue("width", 1360);
+layout.SetValue("height", 660);
+layout.SetValue("margin", new { l = 0, r = 24, b = 0, t = 0, pad = 0 });
 
 var chart = GenericChart.ofTraceObject(true, trace).WithLayout(layout);
 

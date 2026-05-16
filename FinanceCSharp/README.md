@@ -1,3 +1,7 @@
+
+[https://jonzingale.github.io/markowitz/index.html](takens-markowitz)
+
+Local build
 ```
 start_postgres
 dotnet build; \
